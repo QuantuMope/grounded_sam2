@@ -8,3 +8,6 @@ build/*
 _C.*
 outputs/*
 checkpoints/*.pt
+gdino_checkpoints/*.pth
+
+.idea
