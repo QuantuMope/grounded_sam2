@@ -1218,10 +1218,10 @@ class SAM2CameraPredictorVOS(SAM2CameraPredictor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.compile_memory_encoder = kwargs.get("compile_memory_encoder", False)
-        self.compile_memory_attention = kwargs.get("compile_memory_attention", False)
-        self.compile_prompt_encoder = kwargs.get("compile_prompt_encoder", False)
-        self.compile_mask_decoder = kwargs.get("compile_mask_decoder", False)
+        self.compile_memory_encoder = kwargs.get("compile_memory_encoder", True)
+        self.compile_memory_attention = kwargs.get("compile_memory_attention", True)
+        self.compile_prompt_encoder = kwargs.get("compile_prompt_encoder", True)
+        self.compile_mask_decoder = kwargs.get("compile_mask_decoder", True)
         self._compile_all_components()
 
     def _compile_all_components(self):
@@ -1243,6 +1243,7 @@ class SAM2CameraPredictorVOS(SAM2CameraPredictor):
                 dynamic=True,
             )
         if self.compile_prompt_encoder:
+            print("Compiling prompt encoder")
             self.sam_prompt_encoder.forward = torch.compile(
                 self.sam_prompt_encoder.forward,
                 mode="max-autotune",
@@ -1250,6 +1251,7 @@ class SAM2CameraPredictorVOS(SAM2CameraPredictor):
                 dynamic=False,  # Accuracy regression on True
             )
         if self.compile_mask_decoder:
+            print("Compiling mask decoder")
             self.sam_mask_decoder.forward = torch.compile(
                 self.sam_mask_decoder.forward,
                 mode="max-autotune",
